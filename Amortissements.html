@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>AMORTISSEMENTS</title>
+	<script src="jquery-3.2.1.min.js"></script>
+</head>
+
+<style type="text/css">
+	h1{
+		color: #333333;
+	}
+	label{
+		color: #33333;
+	}
+	.form{
+		padding: 10px;
+	}
+	.myform{
+		border-collapse: collapse;
+		width: 100%;
+
+	}
+	.myform td{
+		border:1px solid;
+	}
+	.myform input, .myform select{
+		width: 100%;
+		color: #000111;	
+	}
+	.info{
+		width: 100%;
+		height: 10em;
+		overflow-x: scroll;
+		overflow: auto;
+		
+	}
+	.matable{
+
+		padding: 0.5em;
+		width: 100%;
+		border-collapse: collapse;
+		
+	}
+	.matable th{
+		color: #333333;
+		border: 1px solid;
+	}
+	.matable td {
+		text-align: left;
+		
+		border: 1px solid;
+	}
+	.btn{
+		font-size: 20px;
+		border:none;
+		color: white;
+		background-color: #333333;
+		text-align: center;
+
+	}
+</style>
+<body>
+
+ 
+
+
+
+<div class="form">
+	<h1>Plan d'amortissement</h1>
+<form name="fat">
+	
+		<label>Amortissement </label><br>
+			<select name="amt">
+				<option value="lin">Linéaire</option>
+				<option value="deg">Dégresif</option>
+			</select><br><br>
+		<label class="mois">Mois</label><br>
+			<select class="mois" name="mois">
+				<option value="1">Janvier</option><option value="2">Février</option><option value="3">Mars</option><option value="4">Avril</option><option value="5">Mai</option><option value="6">Juin</option>
+				<option value="7">Juiller </option><option value="8">Aout</option><option value="9">Septembre</option><option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>
+			</select><br><br>
+		
+		<label>Valeur d'origine </label><br>
+		<input type="number" name="vo"><br><br>
+		<label>Durée </label><br>
+		<input type="number" name="duree"><br><br>
+		<label>Année </label><br>
+		<input type="number" name="annee" value="2019"><br><br>
+	<input class="btn" type="button" value="Calculer" onclick="Calculer()"  ><br><br>
+	
+</form>
+</div>
+
+
+<table id="mytable" class="matable">
+
+	<thead id="header">
+		
+	</thead>
+
+	<tbody id="resultats">
+		
+	</tbody>
+	
+</table>
+<div class="info">
+
+</div>
+
+
+<script type="text/javascript">
+
+
+
+	var res=document.getElementById("resultats");
+	var hed=document.getElementById("header");
+	var mytable=document.getElementById("mytable");
+	function Calculer(){
+		res.innerHTML="";
+		hed.innerHTML="";
+		if(fat.amt.value=="lin")
+			A_Lineaire();
+		else if(fat.amt.value=="deg")
+			A_Degressif();
+		
+		
+	
+		}
+
+	
+	function A_Degressif() {
+		hed.innerHTML="<th style='width:8%'>Année</th><th style='width:19%'>Base D'at</th><th style='width:8%'>Taux-L</th><th style='width:19%'>Annuités</th><th style='width:19%'>Cumule d'at</th><th style='width:19%'>VNA</th><th style='width:8%'>Taux-D</th>";
+		var vo=parseFloat(fat.vo.value);
+		if(isNaN(vo)){
+			vo=0;
+		}
+		var vo_def=vo;
+		var duree=parseInt(fat.duree.value);
+		const reg=/\d/;
+		if(!reg.test(duree)){
+			return false;
+		}
+		var annee=fat.annee.value;
+		var nbrmois =12*duree;
+		var coeff=1;
+		if(duree==3 || duree==4)
+		coeff=1.5;
+		else if(duree==5 || duree==6)
+		coeff=2;
+		else if(duree>6)
+		coeff=3;
+
+		var taux=100/duree*coeff/100;
+	
+		var mois=fat.mois.value;	
+		var tauxd=(13-mois)/nbrmois;
+
+		if(taux<tauxd)
+		{
+			taux=tauxd;
+		}
+		var annuite=parseFloat(vo*taux*(13-mois)/12);
+		
+
+		var c=annuite;
+		var vna=vo_def-annuite;
+		
+		res.innerHTML+="<tr>";
+
+		if(mois!=1){
+
+	res.innerHTML+="<td >"+(annee++)+"("+(13-mois)+"mois)</td> <td>"+vo.toFixed(2)+"</td> <td >"+(taux*100).toFixed(2)+"%</td> <td >"+annuite.toFixed(2)+"</td> <td >"+c.toFixed(2)+"</td> <td >"+vna.toFixed(2)+"</td><td >"+(tauxd*100).toFixed(2)+"%</td>";
+
+		}
+		
+		else{
+
+			res.innerHTML+="<td >"+(annee++)+"</td> <td >"+vo.toFixed(2)+"</td> <td >"+(taux*100).toFixed(2)+"%</td> <td >"+annuite.toFixed(2)+"</td> <td >"+c.toFixed(2)+"</td> <td >"+vna.toFixed(2)+"</td><td>"+(tauxd*100).toFixed(2)+"%</td>";
+		
+		}
+		nbrmois=nbrmois-(13-mois);
+			 tauxd=12/nbrmois;
+
+		for(j=0;j<duree-1;j++)
+		{
+		 
+			vo-=annuite;
+			
+			if(taux<tauxd)
+		{
+			taux=tauxd;
+		}
+		var annuite=parseFloat(vo*taux);
+			 		c=c+annuite;
+					vna=vo_def-c;
+			res.innerHTML+="<td>"+(annee++)+"</td> <td>"+vo.toFixed(2)+"</td> <td>"+(taux*100).toFixed(2)+"%</td> <td>"+annuite.toFixed(2)+"</td> <td>"+c.toFixed(2)+"</td> <td>"+vna.toFixed(2)+"</td><td>"+(tauxd*100).toFixed(2)+"%</td>";
+
+			
+			nbrmois=nbrmois-12;
+			
+			 tauxd=12/nbrmois;
+			
+		}
+/////
+				if(mois!=1)
+			{
+				vo-=annuite;
+			
+			 tauxd=(mois-1)/nbrmois;
+			
+			if(taux<tauxd)
+		{
+			taux=tauxd;
+		}
+		
+				  annuite=parseFloat(vo*taux);////pour février 2   2-1=1  alors c ait 1/12
+
+			 		c=c+annuite;
+					vna=vo_def-c;
+			res.innerHTML+="<td >"+(annee++)+"("+(mois-1)+"mois)</td> <td>"+vo.toFixed(2)+"</td> <td>"+(taux*100).toFixed(2)+"%</td> <td>"+annuite.toFixed(2)+"</td> <td style='width:20%'>"+c.toFixed(2)+"</td> <td >"+Math.abs(vna).toFixed(2)+"</td><td>"+(tauxd*100).toFixed(2)+"%</td>";
+
+			}
+
+		res.innerHTML+="</tr>";
+		
+		}
+	
+
+		function A_Lineaire() {
+			hed.innerHTML="<th style='width:6%'>Année</th><th style='width:22%'>Base D'at</th><th style='width:6%'>Taux-L</th><th style='width:22%'>Annuités</th><th style='width:22%'>Cumule d'at</th><th style='width:22%'>VNA</th>";
+
+
+		var vo=parseFloat(fat.vo.value);
+		if(isNaN(vo)){
+			vo=0;
+		}
+		var duree=fat.duree.value;
+		var annee=fat.annee.value;
+		duree=parseInt(duree);
+
+		const reg=/\d/;
+		if(!reg.test(duree)){
+			return false;
+		}
+		
+		var mois=fat.mois.value;
+
+		
+		var annuite=parseFloat((vo*100/duree)/100*(13-mois)/12);
+		
+		var c=annuite;
+		var vna=vo-annuite;
+		var taux=100/duree;
+		res.innerHTML+="<tr>";
+
+		if(mois!=1){
+	res.innerHTML+="<td>"+(annee++)+"("+(13-mois).toFixed(2)+"mois)</td> <td>"+vo.toFixed(2)+"</td> <td>"+(100/duree).toFixed(2)+"%</td> <td>"+annuite.toFixed(2)+"</td> <td style='width:20%'>"+c.toFixed(2)+"</td> <td>"+vna.toFixed(2)+"</td>";
+		}
+		
+		else{
+			res.innerHTML+="<td>"+(annee++)+"</td> <td>"+vo.toFixed(2)+"</td> <td>"+(100/duree).toFixed(2)+"%</td> <td>"+annuite.toFixed(2)+"</td> <td style='width:20%'>"+c.toFixed(2)+"</td> <td>"+vna.toFixed(2)+"</td>";
+		}
+
+		for(j=0;j<duree-1;j++)
+		{
+
+			 annuite=parseFloat(vo*(100/duree)/100);
+			 		c=c+annuite;
+					vna=vo-c;
+			res.innerHTML+="<td >"+(annee++)+"</td> <td >"+vo.toFixed(2)+"</td> <td >"+(100/duree).toFixed(2)+"%</td> <td>"+annuite.toFixed(2)+"</td> <td>"+c.toFixed(2)+"</td> <td >"+vna.toFixed(2)+"</td>";
+
+			
+		}
+				if(mois!=1)
+			{
+				  annuite=parseFloat((vo*100/duree)/100*(mois-1)/12);////pour février 2   2-1=1  alors c ait 1/12
+
+			 		c=c+annuite;
+					vna=vo-c;
+			res.innerHTML+="<td >"+(annee++)+"("+(mois-1)+"mois)</td> <td>"+vo.toFixed(2)+"</td> <td>"+(100/duree).toFixed(2)+"%</td> <td>"+annuite.toFixed(2)+"</td> <td>"+c.toFixed(2)+"</td> <td>"+Math.abs(vna).toFixed(2)+"</td>";
+
+			}
+
+		res.innerHTML+="</tr>";
+		}
+	
+	
+</script>
+<script type="text/javascript">
+		
+	
+</script>
+
+
+</body>
+</html>
