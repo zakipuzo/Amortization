@@ -2,10 +2,14 @@
 <html>
 <head>
 	<title>AMORTISSEMENTS</title>
+	 <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
 	<script src="jquery-3.2.1.min.js"></script>
+	<script src="bootstrap.min.js"></script>
 </head>
-hhh
+
 <style type="text/css">
+	html,body{text-align: center;}
 	h1{
 		color: #333333;
 	}
@@ -14,6 +18,7 @@ hhh
 	}
 	.form{
 		padding: 10px;
+		padding-top: 3em;
 	}
 	.myform{
 		border-collapse: collapse;
@@ -54,7 +59,7 @@ hhh
 		font-size: 20px;
 		border:none;
 		color: white;
-		background-color: #333333;
+		background-color: tomato;
 		text-align: center;
 
 	}
@@ -66,27 +71,28 @@ hhh
 
 
 <div class="form">
-	<h1>Plan d'amortissement</h1>
 <form name="fat">
 	
-		<label>Amortissement </label><br>
+		<label>Plan d'amortissement</label><br>
 			<select name="amt">
 				<option value="lin">Linéaire</option>
 				<option value="deg">Dégresif</option>
 			</select><br><br>
-		<label class="mois">Mois</label><br>
+		<label  class="mois">Mois</label><br>
 			<select class="mois" name="mois">
 				<option value="1">Janvier</option><option value="2">Février</option><option value="3">Mars</option><option value="4">Avril</option><option value="5">Mai</option><option value="6">Juin</option>
 				<option value="7">Juiller </option><option value="8">Aout</option><option value="9">Septembre</option><option value="10">Octobre</option><option value="11">Novembre</option><option value="12">Décembre</option>
 			</select><br><br>
 		
-		<label>Valeur d'origine </label><br>
-		<input type="number" name="vo"><br><br>
-		<label>Durée </label><br>
-		<input type="number" name="duree"><br><br>
+		<label>Valeur d'origine <=99 999 999 999</label><br>
+		<input id="idvo" type="number" name="vo"><br><br>
+		<label>Durée <=200 ans</label><br>
+		<input id="idduree" type="number" name="duree"><br><br>
 		<label>Année </label><br>
 		<input type="number" name="annee" value="2019"><br><br>
-	<input class="btn" type="button" value="Calculer" onclick="Calculer()"  ><br><br>
+		
+	<input class="btn" type="button" value="Calculer" onclick="Calculer()"  >
+	<br><br>
 	
 </form>
 </div>
@@ -118,18 +124,32 @@ hhh
 	function Calculer(){
 		res.innerHTML="";
 		hed.innerHTML="";
+		var idvo=parseInt(fat.vo.value);
+		var idduree=parseInt(fat.duree.value);
+		
+       const regvo=/^[1-9][0-9]{0,10}$/;
+       const regduree=/^[3-9][0-9]{0,1}$|[1][0-9]{0,2}$|[2][0]{0,2}$/;
+		if(regvo.test(idvo) && regduree.test(idduree)){
+
 		if(fat.amt.value=="lin")
 			A_Lineaire();
 		else if(fat.amt.value=="deg")
 			A_Degressif();
+
+		}
+		else{
+
+		}
+	
+
 		
 		
 	
-		}
+		}//end calculer
 
 	
 	function A_Degressif() {
-		hed.innerHTML="<th style='width:8%'>Année</th><th style='width:19%'>Base D'at</th><th style='width:8%'>Taux-L</th><th style='width:19%'>Annuités</th><th style='width:19%'>Cumule d'at</th><th style='width:19%'>VNA</th><th style='width:8%'>Taux-D</th>";
+		hed.innerHTML="<th style='width:8%'>Année</th><th style='width:19%'>Base d'amortissement</th><th style='width:8%'>Taux-L</th><th style='width:19%'>Annuités</th><th style='width:19%'>Cumule d'amortissement</th><th style='width:19%'>VNA</th><th style='width:8%'>Taux-D</th>";
 		var vo=parseFloat(fat.vo.value);
 		if(isNaN(vo)){
 			vo=0;
@@ -227,7 +247,7 @@ hhh
 	
 
 		function A_Lineaire() {
-			hed.innerHTML="<th style='width:6%'>Année</th><th style='width:22%'>Base D'at</th><th style='width:6%'>Taux-L</th><th style='width:22%'>Annuités</th><th style='width:22%'>Cumule d'at</th><th style='width:22%'>VNA</th>";
+			hed.innerHTML="<th style='width:6%'>Année</th><th style='width:22%'>Base d'amortissement</th><th style='width:6%'>Taux-L</th><th style='width:22%'>Annuités</th><th style='width:22%'>Cumule d'amortissement</th><th style='width:22%'>VNA</th>";
 
 
 		var vo=parseFloat(fat.vo.value);
@@ -254,7 +274,7 @@ hhh
 		res.innerHTML+="<tr>";
 
 		if(mois!=1){
-	res.innerHTML+="<td>"+(annee++)+"("+(13-mois).toFixed(2)+"mois)</td> <td>"+vo.toFixed(2)+"</td> <td>"+(100/duree).toFixed(2)+"%</td> <td>"+annuite.toFixed(2)+"</td> <td style='width:20%'>"+c.toFixed(2)+"</td> <td>"+vna.toFixed(2)+"</td>";
+	res.innerHTML+="<td>"+(annee++)+"("+(13-mois)+"mois)</td> <td>"+vo.toFixed(2)+"</td> <td>"+(100/duree).toFixed(2)+"%</td> <td>"+annuite.toFixed(2)+"</td> <td style='width:20%'>"+c.toFixed(2)+"</td> <td>"+vna.toFixed(2)+"</td>";
 		}
 		
 		else{
@@ -282,6 +302,8 @@ hhh
 			}
 
 		res.innerHTML+="</tr>";
+
+
 		}
 	
 	

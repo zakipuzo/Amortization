@@ -1,2 +1,0 @@
-# Amortization
-Amortization calculation
